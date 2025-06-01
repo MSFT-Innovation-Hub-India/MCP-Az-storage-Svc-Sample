@@ -7,6 +7,7 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    AZURE_STORAGE_ACCOUNT=aistoragesvc \
     PORT=8000
 
 # Copy requirements first for better layer caching
@@ -22,9 +23,8 @@ COPY mcp-server/ .
 EXPOSE 8000
 
 # Set up healthcheck
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${PORT}/health || exit 1
+# HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+#   CMD curl -f http://localhost:${PORT}/health || exit 1
 
-# Command to run the application
-# Use Gunicorn for production-ready ASGI server
+# Command to run the application with Uvicorn (already set up in server.py)
 CMD ["python", "server.py"]

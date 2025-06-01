@@ -71,5 +71,22 @@ async def delete_blob(container_name: str, blob_name: str) -> dict:
         return {"error": "Storage service not initialized"}
     return await blob_service._delete_blob(container_name, blob_name)
 
+@mcp.tool()
+async def upload_image_blob(container_name: str, blob_name: str, image_base64: str, content_type: str = "image/jpeg") -> dict:
+    """Upload a base64-encoded image to a blob"""
+    if not blob_service._blob_service_client:
+        return {"error": "Storage service not initialized"}
+    return await blob_service._upload_image_blob(container_name, blob_name, image_base64, content_type)
+
 if __name__ == "__main__":
-    mcp.run(transport="sse")
+    import os
+    import uvicorn
+    
+    # Get the FastAPI app with SSE transport
+    app = mcp.sse_app()
+    
+    # Get port from environment with default to 8000
+    port = int(os.environ.get("PORT", 8000))
+    
+    # Run using Uvicorn server, binding to 0.0.0.0
+    uvicorn.run(app, host="0.0.0.0", port=port)
